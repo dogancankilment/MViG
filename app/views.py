@@ -1,24 +1,24 @@
-"""
-Definition of views.
-"""
-
-from django.shortcuts import render
+from django.shortcuts import render, redirect, render_to_response, HttpResponse
 from django.http import HttpRequest
 from django.template import RequestContext
 from datetime import datetime
+from .models import Post
+from django.core.context_processors import csrf
+from django.core.urlresolvers import reverse
+
 
 def home(request):
-    """Renders the home page."""
-    assert isinstance(request, HttpRequest)
-    return render(
-        request,
-        'app/index.html',
-        context_instance = RequestContext(request,
-        {
-            'title':'Home Page',
-            'year':datetime.now().year,
-        })
-    )
+    c = {"request": request}
+    c.update(csrf(request))
+
+    return render_to_response("app/index.html", c)
+
+
+def test(request):
+    post_list = Post.objects.all()
+    return render_to_response("app/test.html",
+                              {"posts": post_list})
+
 
 def contact(request):
     """Renders the contact page."""
@@ -34,6 +34,7 @@ def contact(request):
         })
     )
 
+
 def about(request):
     """Renders the about page."""
     assert isinstance(request, HttpRequest)
@@ -47,3 +48,7 @@ def about(request):
             'year':datetime.now().year,
         })
     )
+
+
+# def hello(request):
+#     return HttpResponse("Hello world")
