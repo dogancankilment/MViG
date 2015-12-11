@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+
+<channel>
+  <title>MViG</title>
+  <link>mvig.azurewebsites.net</link>
+  <description>Message Via Internet to GSM</description>
+
+  {% for m in all_messages %}
+      <item>
+        <title></title>
+        <description>
+            <p>mr</p>
+            {{ m.message_receiver }}
+            <p>mc</p>
+            {{ m.message_content }}
+            {{ m.id }}
+        </description>
+      </item>
+  {% endfor %}
+</channel>
+
+</rss>

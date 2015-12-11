@@ -9,9 +9,10 @@ from django.core.urlresolvers import reverse
 
 
 def test(request):
-    post_list = Post.objects.all()
-    return render_to_response("app/test.html",
-                              {"posts": post_list})
+    all_messages = Post.objects.all()
+
+    return render_to_response("rss/rssfeed",
+                              {"all_messages": all_messages})
 
 
 def new_message(request):

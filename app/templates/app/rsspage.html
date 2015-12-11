@@ -8,9 +8,10 @@
             {% if posts %}
                 <div>
                     {% for p in posts %}
-                        <div><h4>Message</h4></div>
-                        <div class="form-control">{{ p.message_receiver }}</div>
-                        <div class="form-control">{{ p.message_content }}</div>
+                        {{ p.message_receiver }}
+                        <br>
+                        {{ p.message_content }}
+                        <br>
                     {% endfor %}
                 </div>
             {% endif %}
