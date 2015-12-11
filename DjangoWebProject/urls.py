@@ -8,9 +8,9 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^$', 'app.views.home', name='home'),
-    url(r'^contact$', 'app.views.contact', name='contact'),
-    url(r'^about', 'app.views.about', name='about'),
     url(r'^test', 'app.views.test', name='test'),
+    url(r'^sendmessage', 'app.views.new_message', name='newMessage'),
+    url(r'^success', 'app.views.success_page', name='success'),
     url(r'^admin/', include(admin.site.urls)),
 
     # url(r'^hello/$', 'app.views.hello', name='hello'),

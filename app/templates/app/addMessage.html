@@ -1,0 +1,25 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="span8 well" style="padding-bottom:0">
+                <form id="message_form" accept-charset="UTF-8" action="" method="POST">
+                    {% csrf_token %}
+                    <div><h4>Message Reciever</h4></div>
+
+                        {{ form.message_receiver }}
+
+                    <div><h4>Message Content</h4></div>
+
+                        {{ form.message_content }}
+                    <br>
+                    <br>
+                    <button class="btn btn-info" type="submit">Send New Message</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
