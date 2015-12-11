@@ -8,13 +8,6 @@ from django.core.context_processors import csrf
 from django.core.urlresolvers import reverse
 
 
-def home(request):
-    c = {"request": request}
-    c.update(csrf(request))
-
-    return render_to_response("app/index.html", c)
-
-
 def test(request):
     post_list = Post.objects.all()
     return render_to_response("app/test.html",
