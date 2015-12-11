@@ -1,2 +1,2 @@
 # MViG-Web
-Message Via Internet to GSM
+Message via Internet to GSM
