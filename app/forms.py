@@ -5,6 +5,8 @@ from .models import Post
 class MessageForm(forms.ModelForm):
     class Meta:
         model = Post
+        fields = ('message_receiver',
+                  'message_content',)
 
     def save(self, commit=True):
         post = Post()
