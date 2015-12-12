@@ -5,6 +5,10 @@
     <title></title>
 </head>
 <body>
-    {{ data }}
+    {% for m in messages %}
+
+        {{ m.destination_number }}-{{ m.message_content }}
+        <br>
+    {% endfor %}
 </body>
 </html>

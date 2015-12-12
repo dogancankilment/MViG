@@ -12,9 +12,13 @@ from django.core import serializers
 
 
 def rss(request):
-    data = serializers.serialize("xml", Message.objects.all())
+    messages = Message.objects.all()
 
-    return TemplateResponse(request, 'app/test.html', {'data': data})
+    data = {"messages": messages}
+
+    return render_to_response("app/test.html", data)
+    # data = serializers.serialize("xml", Message.objects.all())
+    # return TemplateResponse(request, 'app/test.html', {'data': data})
 
 
 def home(request):
