@@ -1,16 +1,19 @@
 from django import forms
-from .models import Post
+from .models import Message
+
+import datetime
 
 
 class MessageForm(forms.ModelForm):
     class Meta:
-        model = Post
-        fields = ('message_receiver',
+        model = Message
+        fields = ('destination_number',
                   'message_content',)
 
     def save(self, commit=True):
-        post = Post()
-        post.message_receiver = self.cleaned_data.get('message_receiver')
-        post.message_content = self.cleaned_data.get('message_content')
+        message = Message()
+        message.destination_number = self.cleaned_data.get('destination_number')
+        message.message_content = self.cleaned_data.get('message_content')
+        message.created_at = datetime.datetime.now()
 
-        post.save()
+        message.save()

@@ -11,10 +11,11 @@
         <title></title>
         <description>
             <p>mr</p>
-            {{ m.message_receiver }}
+            {{ m.destination_number }}
             <p>mc</p>
             {{ m.message_content }}
             {{ m.id }}
+            {{ m.created_at }}
         </description>
       </item>
   {% endfor %}

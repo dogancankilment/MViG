@@ -1,6 +1,7 @@
 from django.db import models
 
 
-class Post(models.Model):
-    message_receiver = models.CharField(max_length=100)
+class Message(models.Model):
+    destination_number = models.CharField(max_length=11)
     message_content = models.TextField()
+    created_at = models.DateTimeField()
