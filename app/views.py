@@ -9,12 +9,13 @@ from django.core.context_processors import csrf
 from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
 from django.core import serializers
+import ipdb
 
 
 def rss(request):
     data = serializers.serialize("xml", Message.objects.all())
-
-    return TemplateResponse(request, 'app/rss.xml', {'data': data})
+    ipdb.set_trace()
+    return TemplateResponse(request, 'app/test.html', {'data': data})
 
 
 def home(request):
