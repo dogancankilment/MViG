@@ -7,9 +7,9 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    # url(r'^$', 'app.views.home', name='home'),
-    url(r'^rss', 'app.views.rss', name='rss'),
     url(r'^$', 'app.views.home', name='home'),
+    url(r'^rss', 'app.views.rss', name='rss'),
+    url(r'^sendmessage$', 'app.views.sendmessage', name='sendmessage'),
     url(r'^success', 'app.views.success_page', name='success'),
     url(r'^admin/', include(admin.site.urls)),
 

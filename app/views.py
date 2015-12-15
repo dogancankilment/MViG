@@ -16,12 +16,12 @@ def rss(request):
 
     data = {"messages": messages}
 
-    return render_to_response("app/test.html", data)
+    return render_to_response("app/rss.html", data)
     # data = serializers.serialize("xml", Message.objects.all())
     # return TemplateResponse(request, 'app/test.html', {'data': data})
 
 
-def home(request):
+def sendmessage(request):
     if request.method == 'POST':
         form = MessageForm(request.POST)
 
@@ -36,7 +36,11 @@ def home(request):
     c = {"form": form, "request": request}
     c.update(csrf(request))
 
-    return render_to_response("app/index.html", c)
+    return render_to_response("app/sendmessage.html", c)
+
+
+def home(request):
+    return render_to_response("app/home.html")
 
 
 def success_page(request):
