@@ -7,16 +7,19 @@
             <div class="span8 well" style="padding-bottom:0">
                 <form id="message_form" accept-charset="UTF-8" action="" method="POST">
                     {% csrf_token %}
-                    <div><h4>Message Reciever</h4></div>
-
+                    <div>
+                        <h4>Message Reciever</h4>
                         {{ form.destination_number }}
-
-                    <div><h4>Message Content</h4></div>
-
+                    </div>
+                    <div>
+                        <h4>Message Content</h4>
                         {{ form.message_content }}
+                    </div>
                     <br>
+                    <div>
+                        <button class="btn btn-info" type="submit">Send New Message</button>
+                    </div>
                     <br>
-                    <button class="btn btn-info" type="submit">Send New Message</button>
                 </form>
             </div>
         </div>
