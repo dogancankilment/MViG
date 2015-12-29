@@ -5,3 +5,5 @@ class Message(models.Model):
     destination_number = models.CharField(max_length=11)
     message_content = models.TextField()
     created_at = models.DateTimeField()
+    image = models.ImageField(upload_to='static/app/images/',
+                              default='static/app/images/default.jpg')

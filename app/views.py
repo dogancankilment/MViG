@@ -21,9 +21,17 @@ def rss(request):
     # return TemplateResponse(request, 'app/test.html', {'data': data})
 
 
+def full(request):
+    messages = Message.objects.all()
+
+    data = {"messages": messages}
+
+    return render_to_response("app/fulldata.html", data)
+
+
 def sendmessage(request):
     if request.method == 'POST':
-        form = MessageForm(request.POST)
+        form = MessageForm(request.POST, request.FILES)
 
         if form.is_valid():
             form.save(commit=True)
