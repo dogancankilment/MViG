@@ -11,8 +11,6 @@
                         <thead>
                             <tr>
                                 <th>id</th>
-                                <th>Destination Number</th>
-                                <th>Message Content</th>
                                 <th>Image</th>
                             </tr>
                         </thead>
@@ -20,9 +18,7 @@
                         <tbody>
                             <tr>
                                 <td>{{ m.id }}</td>
-                                <td>{{ m.destination_number }}</td>
-                                <td>{{ m.message_content }}</td>
-                                <td><image src="/{{ m.image }}" width="200" height="40" ></image></td>
+                                <td><image src="/{{ m.image }}"></image></td>
                             </tr>
                         </tbody>
                         {% endfor %}

@@ -29,6 +29,14 @@ def full(request):
     return render_to_response("app/fulldata.html", data)
 
 
+def original(request):
+    messages = Message.objects.all()
+
+    data = {"messages": messages}
+
+    return render_to_response("app/original.html", data)
+
+
 def sendmessage(request):
     if request.method == 'POST':
         form = MessageForm(request.POST, request.FILES)
