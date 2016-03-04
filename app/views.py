@@ -8,7 +8,7 @@ from .forms import MessageForm
 from django.core.context_processors import csrf
 from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
-from django.core import serializers
+from utils.mail_sender import mail_sender
 
 
 def rss(request):
@@ -19,22 +19,6 @@ def rss(request):
     return render_to_response("app/rss.html", data)
     # data = serializers.serialize("xml", Message.objects.all())
     # return TemplateResponse(request, 'app/test.html', {'data': data})
-
-
-def full(request):
-    messages = Message.objects.all()
-
-    data = {"messages": messages}
-
-    return render_to_response("app/fulldata.html", data)
-
-
-def original(request):
-    messages = Message.objects.all()
-
-    data = {"messages": messages}
-
-    return render_to_response("app/original.html", data)
 
 
 def sendmessage(request):
