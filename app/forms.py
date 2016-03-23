@@ -17,7 +17,5 @@ class MessageForm(forms.ModelForm):
         message.save()
         mail_sender(message.message_content, message.destination_number)
 
-
-
         # message.created_at = datetime.datetime.now()
         # message.image = self.cleaned_data.get('image')

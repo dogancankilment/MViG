@@ -9,6 +9,7 @@ from django.core.context_processors import csrf
 from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
 from utils.mail_sender import mail_sender
+from django.core import serializers
 
 
 def rss(request):
@@ -37,6 +38,12 @@ def sendmessage(request):
     c.update(csrf(request))
 
     return render_to_response("app/sendmessage.html", c)
+
+
+def messageSerializer(request):
+    data = serializers.serialize('json', Message.objects.all(), fields=('destination_number','message_content'))
+
+    return render_to_response("app/messageSerializer.html", {"data": data})
 
 
 def home(request):
