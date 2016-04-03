@@ -1,6 +1,5 @@
 from django import forms
 from .models import Message
-from utils.mail_sender import mail_sender
 
 
 class MessageForm(forms.ModelForm):
@@ -18,7 +17,3 @@ class MessageForm(forms.ModelForm):
         message.message_check = False
 
         message.save()
-
-        # mail_sender(message.message_content, message.destination_number)
-        # message.created_at = datetime.datetime.now()
-        # message.image = self.cleaned_data.get('image')
