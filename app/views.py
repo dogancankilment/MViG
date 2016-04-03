@@ -1,38 +1,25 @@
 from django.shortcuts import render, redirect, render_to_response, HttpResponse
-from django.template.response import TemplateResponse
-from django.http import HttpRequest
-from django.template import RequestContext
-from datetime import datetime
 from .models import Message
 from .forms import MessageForm
 from django.core.context_processors import csrf
-from django.core.urlresolvers import reverse
-from django.template.loader import render_to_string
 from django.core import serializers
 from utils.ftp_fileupload import ftp_upload
-import os
-from utils.ftp_directorylist import directory_list
 
 
 def rss(request):
     messages = Message.objects.all()
-
     data = {"messages": messages}
 
     return render_to_response("app/rss.html", data)
-    # data = serializers.serialize("xml", Message.objects.all())
-    # return TemplateResponse(request, 'app/test.html', {'data': data})
 
 
-def sendmessage(request):
+def send_message(request):
     if request.method == 'POST':
         form = MessageForm(request.POST, request.FILES)
 
         if form.is_valid():
             form.save(commit=True)
-
-            messageSerializer(request)
-
+            message_serializer(request)
             ftp_upload()
 
             return success_page(request)
@@ -43,20 +30,19 @@ def sendmessage(request):
     c = {"form": form, "request": request}
     c.update(csrf(request))
 
-    return render_to_response("app/sendmessage.html", c)
+    return render_to_response("app/sendMessage.html", c)
 
 
-def messageSerializer(request):
-    data = serializers.serialize('json', Message.objects.all(), fields=('destination_number', 'message_content', 'message_check'))
-    file= open("app/templates/app/index.html", "w")
-    file.write(data)
+def message_serializer(request):
+    clean_data = serializers.serialize('json', Message.objects.all(),
+                                       fields=('destination_number',
+                                               'message_content',
+                                               'message_check'))
+
+    upload_data = open("app/templates/app/index.html", "w")
+    upload_data.write(clean_data)
 
     return render_to_response("app/index.html")
-
-
-def android(comer):
-
-    return render_to_response("app/comer", {"comer": comer})
 
 
 def home(request):
