@@ -2,6 +2,8 @@ import ftplib
 import os
 
 
+for_file = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
+
 def ftp_upload():
     ftp = ftplib.FTP("www.mefedck.hol.es")
     ftp.login("u439637200", "12345678dck")
@@ -10,5 +12,4 @@ def ftp_upload():
 
 
 if __name__ == '__main__':
-    for_file = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
     ftp_upload()
