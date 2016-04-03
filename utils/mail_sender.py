@@ -3,7 +3,6 @@ from django.core.mail import EmailMultiAlternatives
 
 
 def mail_sender(message_content, message_number):
-
         subject = message_number
         text_content = message_content
         from_email = 'surveydck@gmail.com'
@@ -15,4 +14,4 @@ def mail_sender(message_content, message_number):
 
         msg.send()
 
-        return HttpResponse("mailiniz gonderildi")
+        return HttpResponse("Your email has been sent")
