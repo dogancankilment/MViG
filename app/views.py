@@ -8,8 +8,10 @@ from .forms import MessageForm
 from django.core.context_processors import csrf
 from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
-from utils.mail_sender import mail_sender
 from django.core import serializers
+from utils.ftp_fileupload import ftp_upload
+import os
+from utils.ftp_directorylist import directory_list
 
 
 def rss(request):
@@ -29,6 +31,10 @@ def sendmessage(request):
         if form.is_valid():
             form.save(commit=True)
 
+            messageSerializer(request)
+
+            ftp_upload()
+
             return success_page(request)
 
     else:
@@ -41,9 +47,16 @@ def sendmessage(request):
 
 
 def messageSerializer(request):
-    data = serializers.serialize('json', Message.objects.all(), fields=('destination_number','message_content'))
+    data = serializers.serialize('json', Message.objects.all(), fields=('destination_number', 'message_content', 'message_check'))
+    file= open("app/templates/app/index.html", "w")
+    file.write(data)
 
-    return render_to_response("app/messageSerializer.html", {"data": data})
+    return render_to_response("app/index.html")
+
+
+def android(comer):
+
+    return render_to_response("app/comer", {"comer": comer})
 
 
 def home(request):
