@@ -8,10 +8,10 @@ admin.autodiscover()
 
 
 urlpatterns = patterns('',
-                       url(r'^$', 'app.views.home', name='home'),
-                       url(r'^rss', 'app.views.rss', name='rss'),
-                       url(r'^send_message$', 'app.views.send_message', name='send_message'),
-                       url(r'^success', 'app.views.success_page', name='success'),
-                       url(r'^message_serializer', 'app.views.message_serializer', name='message_serializer'),
+                       url(r'^$', 'main_app.views.home', name='home'),
+                       url(r'^rss', 'main_app.views.rss', name='rss'),
+                       url(r'^send_message$', 'main_app.views.send_message', name='send_message'),
+                       url(r'^success', 'main_app.views.success_page', name='success'),
+                       url(r'^message_serializer', 'main_app.views.message_serializer', name='message_serializer'),
                        url(r'^admin/', include(admin.site.urls)),
                        )
