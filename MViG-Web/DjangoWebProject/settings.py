@@ -142,6 +142,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'main_app',
+    'user_app',
     'rest_framework',
 )
 
