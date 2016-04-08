@@ -20,13 +20,13 @@ import android.widget.TextView;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
-public class RegisterActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class RegisterActivity extends AppCompatActivity {
 
-
-    private static final int REQUEST_READ_CONTACTS = 0;
 
     private AutoCompleteTextView mEmailView;
+    private AutoCompleteTextView mUsernameView;
     private EditText mPasswordView;
+    private EditText mConfirmPasswordView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +34,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderManager
         setContentView(R.layout.activity_register);
 
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-        populateAutoComplete();
+        mUsernameView = (AutoCompleteTextView) findViewById(R.id.username);
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -43,6 +43,20 @@ public class RegisterActivity extends AppCompatActivity implements LoaderManager
                 if (id == R.id.login || id == EditorInfo.IME_NULL) {
                     attemptRegister();
                     return true;
+                }
+                return false;
+            }
+        });
+
+        mConfirmPasswordView = (EditText) findViewById(R.id.confirmpassword);
+        mConfirmPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(!TextUtils.isEmpty(mPasswordView.getText().toString())) {
+                    if (actionId == R.id.login || actionId == EditorInfo.IME_NULL) {
+                        isPasswordConfirm(mPasswordView.getText().toString(), mConfirmPasswordView.getText().toString());
+                        return true;
+                    }
                 }
                 return false;
             }
@@ -59,10 +73,6 @@ public class RegisterActivity extends AppCompatActivity implements LoaderManager
     }
 
     private void attemptRegister() {
-        /*if (mAuthTask != null) {
-            return;
-        }*/
-
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
@@ -70,6 +80,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderManager
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
+        String confirmpassword = mConfirmPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -79,6 +90,17 @@ public class RegisterActivity extends AppCompatActivity implements LoaderManager
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
+        }
+
+        if(!isPasswordConfirm(password,confirmpassword)){
+            mConfirmPasswordView.setError(getString(R.string.error_not_equals_passwords));
+            focusView = mConfirmPasswordView;
+            cancel = true;
+        }
+
+        // Check for equals password with confirm password, if the user entered one.
+        if (!TextUtils.isEmpty(password) && !TextUtils.isEmpty(confirmpassword)) {
+            isPasswordConfirm(password, confirmpassword);
         }
 
         // Check for a valid email address.
@@ -92,17 +114,15 @@ public class RegisterActivity extends AppCompatActivity implements LoaderManager
             cancel = true;
         }
 
-        if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
+        if(cancel){
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            //showProgress(true);
-            //mAuthTask = new UserLoginTask(email, password);
-            //mAuthTask.execute((Void) null);
+            createNewUserAccount(email, mUsernameView.getText().toString(), password);
         }
+    }
+
+    private void createNewUserAccount(String email, String username, String password) {
+        User user = new User(email, username, password);
     }
 
     private boolean isEmailValid(String email) {
@@ -113,49 +133,10 @@ public class RegisterActivity extends AppCompatActivity implements LoaderManager
         return password.length() > 4;
     }
 
-    private void populateAutoComplete() {
-        if (!mayRequestContacts()) {
-            return;
-        }
 
-        getLoaderManager().initLoader(0, null, this);
+    private boolean isPasswordConfirm(String password, String cPassword)
+    {
+        return password.equals(cPassword);
     }
 
-    private boolean mayRequestContacts() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            return true;
-        }
-        if (checkSelfPermission(READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        }
-        if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
-            Snackbar.make(mEmailView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(android.R.string.ok, new View.OnClickListener() {
-                        @Override
-                        @TargetApi(Build.VERSION_CODES.M)
-                        public void onClick(View v) {
-                            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-                        }
-                    });
-        } else {
-            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-        }
-        return false;
-    }
-
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return null;
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-
-    }
 }
