@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Please Sign Up</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/static/app/content/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/static/app/content/signin.css" rel="stylesheet">
+
+  </head>
+
+  <body>
+
+    <div class="container">
+      
+      <form method="POST" class="form-signin" role="form">
+        <h2 class="form-signin-heading">Sign Up</h2>
+        {% for field in form %}
+            <input type="{{field.field.widget.input_type}}" name="{{field.html_name}}" class="form-control" placeholder="{{field.label}}" required autofocus>
+        {% endfor %}
+        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}" />
+        <button class="btn btn-lg btn-primary btn-block" type="submit">SignUp</button>
+        {% if form.errors %}
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <div class="alert alert-error">
+                        <strong>{{ error|escape }}</strong>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+          <!--diffrent version-->
+
+            {% for error in form.non_field_errors %}
+            <div class="alert alert-error">
+                <strong>{{ error|escape }}</strong>
+            </div>
+            {% endfor %}
+        {% endif %}
+      </form>
+
+    </div> <!-- /container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+  </body>
+</html>
