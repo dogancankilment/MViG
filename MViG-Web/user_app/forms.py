@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from django.forms.models import ModelForm
 
 
 class UserCreateForm(UserCreationForm):
@@ -29,3 +30,11 @@ class UserCreateForm(UserCreationForm):
             user.save()
 
         return user
+
+
+class LoginForm(forms.Form):
+    username = forms.CharField(required=True, label="email")
+    password = forms.CharField(widget=forms.PasswordInput, required=True)
+
+    def clean_form(self):
+        return self.cleaned_data
