@@ -6,7 +6,8 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
                        url(r'^$',
-                           'main_app.views.home', name='home'),
+                           'main_app.views.home',
+                           name='home'),
 
                        url(r'^message/',
                            include('main_app.urls')),
