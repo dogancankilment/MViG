@@ -1,9 +1,11 @@
 package couchbase.com.mvig_android_user;
 
+import android.app.Activity;
+
 /**
  * Created by Mustafa on 8.4.2016.
  */
-public class User {
+public class User extends Activity{
 
     private String email;
     private String password;

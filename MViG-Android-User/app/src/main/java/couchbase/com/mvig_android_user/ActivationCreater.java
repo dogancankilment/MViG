@@ -8,7 +8,6 @@ import java.util.Random;
 public class ActivationCreater {
 
     private static String actCode;
-
     public static void createCode(){
         Random random = new Random();
         StringBuilder buffer = new StringBuilder();

@@ -18,21 +18,20 @@ import javax.mail.internet.MimeMessage;
  */
 public class MailSender extends AsyncTask<String, Void, Void> {
 
-
-
     @Override
     protected Void doInBackground(String... params) {
         try {
-            Log.i("Bakınız", params[0]);
-            String mailToSend = params[0];
-            sendMail(mailToSend);
+            String mailToSend = params[0];      //parametre olarak gelen mailadresi değişkene alınıyor.
+            String activationCodeToSend = params[1];  //parametre olarak gelen aktivasyon kodu değişkene alınıyor.
+            Log.i("Uzunluk",mailToSend);
+            sendMail(mailToSend, activationCodeToSend);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    private void sendMail(String mailAdress) throws Exception {
+    private void sendMail(String mailAdress, String activationCode) throws Exception {
 
         Log.d("TAG", "sendMail");
 
@@ -54,9 +53,9 @@ public class MailSender extends AsyncTask<String, Void, Void> {
 
         msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(mailAdress, false));
 
-        msg.setSubject("Mesajınız Var");
+        msg.setSubject("MViG Application Activation Code");
 
-        msg.setText("The World!!");
+        msg.setText("\nYour activation code: " + activationCode + "\n \n Please activate your account with code");
 
         msg.setSentDate(new Date());
 

@@ -1,6 +1,6 @@
 package couchbase.com.mvig_android_user;
 
-import android.os.AsyncTask;
+import android.content.*;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -14,16 +14,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Properties;
-import java.util.Date;
-
-import javax.mail.*;
-import javax.mail.internet.*;
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
-
-import com.sun.mail.smtp.SMTPTransport;
-
 public class RegisterActivity extends AppCompatActivity {
 
 
@@ -31,11 +21,16 @@ public class RegisterActivity extends AppCompatActivity {
     private AutoCompleteTextView mUsernameView;
     private EditText mPasswordView;
     private EditText mConfirmPasswordView;
-
+    private SharedPreferences sharedPreferences=null;
+    SharedPreferences.Editor editor=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        sharedPreferences = getSharedPreferences("activation_code",Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
 
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         mUsernameView = (AutoCompleteTextView) findViewById(R.id.username);
@@ -81,13 +76,15 @@ public class RegisterActivity extends AppCompatActivity {
         mEmailView.setError(null);
         mPasswordView.setError(null);
 
+        boolean cancel = false;
+        View focusView = null;
+
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
         String confirmpassword = mConfirmPasswordView.getText().toString();
 
-        boolean cancel = false;
-        View focusView = null;
+
 
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
@@ -118,63 +115,32 @@ public class RegisterActivity extends AppCompatActivity {
             cancel = true;
         }
 
+
         if (cancel) {
             focusView.requestFocus();
         } else {
             createNewUserAccount(email, mUsernameView.getText().toString(), password);
             MailSender sender = new MailSender();
-            sender.execute("");
-        }
-    }
 
-    public class MailSender extends AsyncTask<String, Void, Void> {
+            //Kullanıcının Girdiği Mail adresi parametre olarak göndermek üzere bir değişkene atılıyor.
+            String userMailAdress = mEmailView.getText().toString();
 
-        @Override
-        protected Void doInBackground(String... params) {
-            try {
-                sendMail();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-    }
+            //Activasyon kodu hazırlanıyor.
+            ActivationCreater.createCode();
+            String activitionCode = ActivationCreater.getCode();
+            Log.i("Aktivasyon Kod", activitionCode);
 
+            //Aktivasyon kodunu sharedpreferences mekanizmasında saklamak için
+            editor.putString("Aktivasyon", activitionCode);
+            editor.putString("Email", userMailAdress);
+            editor.commit();
 
-    private void sendMail() throws Exception {
+            //Mail adresine kod gönderme işlemi başlatılıyor.
+            sender.execute(userMailAdress, activitionCode);
 
-        Log.d("TAG", "sendMail");
-
-        Properties props = System.getProperties();
-
-        props.put("mail.smtp.host", "smtp.gmail.com");
-
-        props.put("mail.smpt.auth", "true");
-
-        props.put("mail.smtp.port", "587");
-
-        props.put("mail.smtp.starttls.enable", "true");
-
-        Session session = Session.getInstance(props);
-
-        Message msg = new MimeMessage(session);
-
-        msg.setFrom(new InternetAddress("SEND_FROM"));
-
-        msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse("m.efe_1905@hotmail.com", false));
-
-        msg.setSubject("Mesajınız Var");
-
-        msg.setText("The World!!");
-
-        msg.setSentDate(new Date());
-
-        SMTPTransport smtp = (SMTPTransport) session.getTransport("smtp");
-        try {
-            smtp.connect("smtp.gmail.com", "musta4a15@gmail.com", "24469444984");
-            smtp.sendMessage(msg, msg.getAllRecipients());
-        } finally {
-            smtp.close();
+            //Aktivasyon sayfasına geçiş
+            Intent intent = new Intent(this, ActivationActivity.class);
+            startActivity(intent);
         }
     }
 

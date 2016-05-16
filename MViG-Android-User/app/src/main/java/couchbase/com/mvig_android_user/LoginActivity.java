@@ -15,7 +15,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-
+import android.content.*;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -45,6 +45,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     private static final int REQUEST_READ_CONTACTS = 0;
 
+
+
     /**
      * A dummy authentication store containing known user names and passwords.
      * TODO: remove after connecting to a real authentication system.
@@ -62,11 +64,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        sharedPreferences = getSharedPreferences("activation_code",Context.MODE_PRIVATE);
+
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
@@ -88,7 +94,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         registerBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                attmeptRegister();
+                attemptRegister();
             }
         });
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
@@ -103,7 +109,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mProgressView = findViewById(R.id.login_progress);
     }
 
-    private void attmeptRegister() {
+    private void attemptRegister() {
         Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
     }
@@ -173,6 +179,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         boolean cancel = false;
         View focusView = null;
 
+        //kullanıcı daha onceden kayıt yaptırmısmı? yani daha önceden aktivasyo kaydı almış ise tekrardan göndermeye gerek kalmaz
+        String emailKontrol = sharedPreferences.getString("Email","Boş");
+        if(emailKontrol.equals(mEmailView.getText().toString())){
+            Intent intent = new Intent(this, ActivationActivity.class);
+            startActivity(intent);
+        }
+
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
@@ -199,8 +212,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+
+            //mAuthTask = new UserLoginTask(email, password);
+            //mAuthTask.execute((Void) null);
         }
     }
 
