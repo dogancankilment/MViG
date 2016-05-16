@@ -7,10 +7,14 @@ urlpatterns = patterns('',
                            name='signup'),
 
                        url(r'^login$',
-                           'user_app.views.login',
-                           name='login'),
+                           'user_app.views.mvig_login',
+                           name='mvig_login'),
 
                        url(r'^logout$',
                            'user_app.views.logout',
                            name='logout'),
+
+                       url(r'^activation/(?P<token_id>.*)',
+                           'user_app.views.activation',
+                           name='activation'),
                        )
