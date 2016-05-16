@@ -10,6 +10,9 @@ PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+LOGIN_URL = '/user/login'
+AUTHENTICATION_BACKENDS = ('user_app.backends.EmailOrUsernameModelBackend',)
+
 ALLOWED_HOSTS = (
     'localhost',
 )

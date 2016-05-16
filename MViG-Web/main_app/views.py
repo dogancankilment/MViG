@@ -39,14 +39,15 @@ def message_serializer(request):
                                                'message_content',
                                                'message_check'))
 
-    upload_data = open("app/templates/app/index.html", "w")
+    upload_data = open("templates/app/index.html", "w")
     upload_data.write(clean_data)
 
     return render_to_response("app/index.html")
 
 
 def home(request):
-    return render_to_response("app/home.html")
+    return render_to_response("app/home.html",
+                              {"request": request})
 
 
 def success_page(request):
