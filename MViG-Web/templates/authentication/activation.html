@@ -1,0 +1,11 @@
+{% extends "app/layout.html" %}
+
+{% block page_content %}
+        {% if messages %}
+            <ul>
+                {% for m in messages %}
+                    <li>{{ m }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+{% endblock page_content %}
