@@ -31,16 +31,14 @@ def signup(request, template_name="authentication/signup.html"):
 
 def mvig_login(request):
     form = LoginForm(request.POST or None)
-    import pdb
+
     if form.is_valid():
         user = authenticate(username=form.cleaned_data['username'],
                             password=form.cleaned_data['password'])
 
         if user:
             if user.is_active:
-                pdb.set_trace()
                 auth.login(request, user)
-                pdb.set_trace()
                 # Redirect to a success page
                 return HttpResponseRedirect(reverse('home'))
 
