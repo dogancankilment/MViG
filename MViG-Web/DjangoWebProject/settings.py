@@ -147,6 +147,7 @@ INSTALLED_APPS = (
     'main_app',
     'user_app',
     'rest_framework',
+    'tastypie',
 )
 
 REST_FRAMEWORK = {
