@@ -3,7 +3,7 @@ from tastypie.constants import ALL
 from .models import User
 
 
-class MyModelResource(ModelResource):
+class UserResource(ModelResource):
     class Meta:
         queryset = User.objects.all()
         resource_name = 'user'
