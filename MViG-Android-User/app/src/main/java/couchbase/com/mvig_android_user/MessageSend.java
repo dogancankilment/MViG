@@ -49,8 +49,9 @@ public class MessageSend extends AppCompatActivity {
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String receiver = message_receiver.getText().toString();
-                final String message = message_body.getText().toString();
+                String receiver = message_receiver.getText().toString();
+                String message = message_body.getText().toString();
+                message = message.replace("\n","");
                 if(message_send(receiver, message))
                     basariMesajiGonder();
             }

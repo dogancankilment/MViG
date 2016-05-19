@@ -19,4 +19,6 @@
     <string name="action_new_account">Create New Account</string>
     <string name="error_not_equals_passwords">Password mismatch</string>
     <string name="title_activity_activation">ActivationActivity</string>
+    <string name="title_activity_message_send">MessageSend</string>
+    <string name="error_email_exist">Bu mail adresi kullanılıyor</string>
 </resources>

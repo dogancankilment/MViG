@@ -208,7 +208,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
 
-    //KUllanıcının email adresi daha önce kullanılmış mı?
+
     public boolean verifyUser(String mail){
         String line = null;
         StringBuilder textv=new StringBuilder();
@@ -218,7 +218,7 @@ public class RegisterActivity extends AppCompatActivity {
             HttpGet request = new HttpGet();
             URI website = null;
 
-            website = new URI("http://www.mvig.duckdns.org/api/user/?format=json&email="+mail);
+            website = new URI("http://www.mvig.duckdns.org/user-api/user/?format=json&email="+mail);
             request.setURI(website);
             response = httpclient.execute(request);
 

@@ -22,6 +22,7 @@ android {
             exclude 'META-INF/LICENSE.txt'
         }
     }
+    useLibrary 'org.apache.http.legacy'
 }
 
 dependencies {
