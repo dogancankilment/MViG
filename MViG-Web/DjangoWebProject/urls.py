@@ -2,9 +2,11 @@ from datetime import datetime
 from django.conf.urls import patterns, url, include
 from django.contrib import admin
 from tastypie.api import Api
-from user_app.resources import MyModelResource
+from user_app.resources import UserResource
+from main_app.resources import MessageResource
 
-user_resource = MyModelResource()
+user_resource = UserResource()
+message_resource = MessageResource()
 
 admin.autodiscover()
 
@@ -23,6 +25,9 @@ urlpatterns = patterns('',
                        url(r'^admin/',
                            include(admin.site.urls)),
 
-                       url(r'^api/',
+                       url(r'^user-api/',
                            include(user_resource.urls)),
+
+                       url(r'^message-api/',
+                           include(message_resource.urls)),
                        )
