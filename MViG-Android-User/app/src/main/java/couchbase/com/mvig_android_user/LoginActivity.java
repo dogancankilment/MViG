@@ -252,11 +252,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         int result = verifyUser(email, password);
 
-        if(result == 1 || result == 2){
-            mEmailView.setError("Hatalı");
+        if(result == 1 ){
+            cancel = true;
+            Intent i = new Intent(this, ActivationActivity.class);
+            startActivity(i);
+        }
+
+        else if(result == 2){
+            mEmailView.setError("Böyle bir kullanıcı yok");
             focusView = mEmailView;
             cancel = true;
             Toast.makeText(this, "Mail adresi veya parola hatalı", Toast.LENGTH_SHORT).show();
+        }
+        else if(result == -1 ){
+            cancel = true;
+            mEmailView.setError("Kullanıcı adı hatalı");
+            focusView = mEmailView;
         }
 
         if (cancel) {
@@ -269,7 +280,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 public void run() {
                     try {
                         showProgress(true);
-                        Thread.sleep(2000);
+                        Thread.sleep(1000);
                         mesajSayfasi();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -311,7 +322,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
-        return 1;
+        return -1;
     }
 
     private boolean isEmailValid(String email) {
