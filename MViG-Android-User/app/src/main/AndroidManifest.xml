@@ -15,9 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:windowSoftInputMode="stateVisible"
             android:name=".LoginActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:windowSoftInputMode="stateVisible">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,6 +28,10 @@
         <activity
             android:name=".ActivationActivity"
             android:label="@string/title_activity_activation"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".MessageSend"
+            android:label="@string/title_activity_message_send"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
