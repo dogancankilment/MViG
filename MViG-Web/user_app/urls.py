@@ -17,4 +17,12 @@ urlpatterns = patterns('',
                        url(r'^activation/(?P<token_id>.*)',
                            'user_app.views.activation',
                            name='activation'),
+
+                       url(r'^android/',
+                           'user_app.views.android',
+                           name='android'),
+
+                       url(r'^andro/login',
+                           'user_app.views.android_login',
+                           name='android_login'),
                        )
