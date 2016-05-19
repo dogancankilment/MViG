@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -29,7 +30,20 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,9 +79,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mProgressView;
     private View mLoginFormView;
     private SharedPreferences sharedPreferences;
+    private Button butonGet;
+    private TextView edtGet;
+    private DefaultHttpClient httpclient;
+    private HttpResponse response;
+    private BufferedReader in;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
@@ -107,6 +128,31 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+    }
+
+    public class A extends AsyncTask<Void, Void, HttpResponse> {
+
+        @Override
+        protected HttpResponse doInBackground(Void... params) {
+            HttpResponse response = null;
+            HttpClient httpclient = new DefaultHttpClient();
+
+            HttpGet request = new HttpGet();
+            URI website = null;
+            try {
+                website = new URI("http://www.mvig.duckdns.org/user/mefe/?name=mustafa&sex=erkek");
+                request.setURI(website);
+                response = httpclient.execute(request);
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            } catch (ClientProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return response;
+        }
     }
 
     private void attemptRegister() {
@@ -204,18 +250,68 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             cancel = true;
         }
 
+        int result = verifyUser(email, password);
+
+        if(result == 1 || result == 2){
+            mEmailView.setError("Hatalı");
+            focusView = mEmailView;
+            cancel = true;
+            Toast.makeText(this, "Mail adresi veya parola hatalı", Toast.LENGTH_SHORT).show();
+        }
+
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            showProgress(true);
+            Thread a = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        showProgress(true);
+                        Thread.sleep(2000);
+                        mesajSayfasi();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
 
-            //mAuthTask = new UserLoginTask(email, password);
-            //mAuthTask.execute((Void) null);
+            a.run();
+
         }
+    }
+
+    private void mesajSayfasi() {
+        Intent i = new Intent(this, MessageSend.class);
+        startActivity(i);
+    }
+
+    private int verifyUser(String email, String password){
+        String line = null;
+        try {
+            httpclient = new DefaultHttpClient();
+            HttpGet request = new HttpGet();
+            URI website = null;
+            website = new URI("http://www.mvig.duckdns.org/user/andro/login/?email="+email+"&password="+password);
+            request.setURI(website);
+            response = httpclient.execute(request);
+            in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+            line = in.readLine();
+
+            if(line.equals("aktif_et"))
+                return 1;
+            else if(line.equals("kullanici_yok"))
+                return 2;
+            else if(line.equals("basarili"))
+                return 3;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return 1;
     }
 
     private boolean isEmailValid(String email) {
