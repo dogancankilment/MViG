@@ -37,12 +37,18 @@ public class ActivationActivity extends AppCompatActivity {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (edt_Activation.getText().toString().length() == 6) {
                     sonuc = verify_activate_code();
-                    if(sonuc)
+                    if(sonuc){
+                        do_Is_verified_true();
                         go_loginActivity();
+                    }
                 }
                 return false;
             }
         });
+
+    }
+
+    private void do_Is_verified_true() {
 
     }
 
