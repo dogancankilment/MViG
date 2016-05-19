@@ -24,6 +24,16 @@
                             </tr>
                         </tbody>
                         {% endfor %}
+                        {% for m in users %}
+                        <tbody>
+                            <tr>
+                                <td>{{ m }}</td>
+                                <td>{{ m.email }}</td>
+                                <td>{{ m.username }}</td>
+                                <td>{{ m.password }}</td>
+                            </tr>
+                        </tbody>
+                        {% endfor %}
                     </table>
                 </div>
             </div>
