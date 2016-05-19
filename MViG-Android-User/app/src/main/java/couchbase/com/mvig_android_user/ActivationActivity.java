@@ -16,12 +16,26 @@ import android.view.inputmethod.CompletionInfo;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 public class ActivationActivity extends AppCompatActivity {
 
     private SharedPreferences sharedPreferences=null;
     SharedPreferences.Editor edit;
     private EditText edt_Activation;
     private boolean sonuc=false;
+    private DefaultHttpClient httpclient;
+    private HttpResponse response;
+    private BufferedReader in;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,8 +52,8 @@ public class ActivationActivity extends AppCompatActivity {
                 if (edt_Activation.getText().toString().length() == 6) {
                     sonuc = verify_activate_code();
                     if(sonuc){
-                        do_Is_verified_true();
-                        go_loginActivity();
+                        if(do_Is_verified_true())
+                            go_loginActivity();
                     }
                 }
                 return false;
@@ -48,8 +62,39 @@ public class ActivationActivity extends AppCompatActivity {
 
     }
 
-    private void do_Is_verified_true() {
+    private boolean do_Is_verified_true() {
+        String line = null;
+        String email = sharedPreferences.getString("Email","Boş");
+        if(!email.equals("Boş")) {
+            try {
+                httpclient = new DefaultHttpClient();
+                HttpGet request = new HttpGet();
+                URI website = null;
+                website = new URI("http://www.mvig.duckdns.org/user/verify/android/?email="+email);
+                request.setURI(website);
+                response = httpclient.execute(request);
+                in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+                line = in.readLine();
 
+                if (line.equals("ok")) {
+                    edit.remove("Email");
+                    edit.remove("Aktivasyon");
+                    edit.apply();
+                    return true;
+                }
+                else
+                    return false;
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+        }
+        else{
+            Toast.makeText(this,"Email gelmedi",Toast.LENGTH_LONG).show();
+        }
+        return false;
     }
 
     private void go_loginActivity() {
@@ -65,8 +110,6 @@ public class ActivationActivity extends AppCompatActivity {
             int kontrol = Integer.parseInt(girilen_aktivasyon_kodu);
             if(aktivasyonKodu == kontrol){
                 Toast.makeText(this.getApplicationContext(),"Hesabınız aktifleştirildi",Toast.LENGTH_LONG ).show();
-                edit.remove("Email");
-                edit.apply();
                 return true;
             }
         }
