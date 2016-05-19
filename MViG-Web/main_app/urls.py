@@ -11,6 +11,6 @@ urlpatterns = patterns('',
                        url(r'^success',
                            'main_app.views.success_page', name='success'),
 
-                       url(r'^message_serializer',
-                           'main_app.views.message_serializer', name='message_serializer'),
+                       url(r'^android',
+                           'main_app.views.android_send_message', name='android_send_message'),
                        )
