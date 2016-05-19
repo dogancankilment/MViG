@@ -5,20 +5,61 @@ from django.contrib.auth import authenticate
 from django.contrib import auth
 from django.contrib import messages
 from django.utils.translation import ugettext as _
+from django.core.context_processors import csrf
 
 from forms import UserCreateForm, LoginForm
 from utils.token_generator import tokens_email, tokens_expire_date
 from utils.mail_sender import mail_sender
 from .models import User
+from django.contrib.auth.models import User
+
+from resources import MyModelResource
 
 import datetime
+
+
+def android(request):
+    username = request.GET['username']
+    email = request.GET['email']
+    password = request.GET['password']
+
+    new_user = User.objects.create_user(username=username,
+                                        email=email,
+                                        password=password)
+
+    new_user.is_active = False
+    new_user.save()
+
+    return HttpResponse("basarili")
+
+
+def android_login(request):
+    email = request.GET['email']
+    password = request.GET['password']
+
+    result = User.objects.filter(email=email).exists()
+
+    if result:
+        user = User.objects.get(email=email)
+
+        if user.is_active:
+            authentication = authenticate(username=str(user.username), password=str(password))
+
+            if authentication:
+                return HttpResponse("basarili")
+
+        else:
+            return HttpResponse("aktif_et")
+    else:
+        return HttpResponse("kullanici_yok")
+
+    return HttpResponse("islem_yapilamadi")
 
 
 def signup(request, template_name="authentication/signup.html"):
     form = UserCreateForm(request.POST or None)
 
     if request.POST:
-
         if form.is_valid():
             form.save()
 
@@ -58,6 +99,7 @@ def activation(request, token_id, template_name="authentication/activation.html"
     if token_id:
         try:
             email_in_token = tokens_email(token_id)
+
         except TypeError:
             messages.error(request,
                            (_('Hatali aktivasyon kodu')))
