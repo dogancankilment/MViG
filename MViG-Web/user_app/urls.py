@@ -6,7 +6,7 @@ urlpatterns = patterns('',
                            'user_app.views.signup',
                            name='signup'),
 
-                       url(r'^login$',
+                       url(r'^login',
                            'user_app.views.mvig_login',
                            name='mvig_login'),
 
@@ -25,4 +25,8 @@ urlpatterns = patterns('',
                        url(r'^andro/login',
                            'user_app.views.android_login',
                            name='android_login'),
+
+                       url(r'^test_user',
+                           'user_app.views.test_db_users',
+                           name='test_db_users'),
                        )
