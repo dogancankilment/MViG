@@ -12,8 +12,7 @@ from utils.token_generator import tokens_email, tokens_expire_date
 from utils.mail_sender import mail_sender
 from .models import User
 from django.contrib.auth.models import User
-
-from resources import MyModelResource
+from django.contrib.auth.decorators import login_required
 
 import datetime
 
@@ -138,6 +137,15 @@ def activation(request, token_id, template_name="authentication/activation.html"
                   template_name)
 
 
+@login_required()
 def logout(request):
     auth.logout(request)
     return redirect(reverse('home'))
+
+
+def test_db_users(request):
+    users = User.objects.all()
+
+    return render_to_response("app/test_db_users.html",
+                              {'users': users,
+                               'request': request})
