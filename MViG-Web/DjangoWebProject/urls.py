@@ -3,10 +3,12 @@ from django.conf.urls import patterns, url, include
 from django.contrib import admin
 from tastypie.api import Api
 from user_app.resources import UserResource
-from main_app.resources import MessageResource
+from main_app.resources import MessageResource, ShowMessagesAndroid
+
 
 user_resource = UserResource()
 message_resource = MessageResource()
+selected = ShowMessagesAndroid()
 
 admin.autodiscover()
 
@@ -30,4 +32,8 @@ urlpatterns = patterns('',
 
                        url(r'^message-api/',
                            include(message_resource.urls)),
+
+                       url(r'^select-api/',
+                           include(selected.urls)),
+
                        )
