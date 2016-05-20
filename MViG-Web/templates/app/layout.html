@@ -22,12 +22,16 @@
             </button>
             <a class="navbar-brand" href="/">MViG</a>
         </div>
+        {% if request.user.is_authenticated %}
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav navbar-left">
                 <li ><a href="/message/send_message">SendMessage</a></li>
-                <li ><a href="/message/rss">RSS</a></li>
-            </ul>
+                <li><a href="/message/show_messages">Message History</a></li>
+                <li><a href="/message/test_messages">Test Messages</a></li>
+                <li><a href="/user/test_users">Test Users</a></li>
 
+            </ul>
+        {% endif %}
             <ul class="nav navbar-nav navbar-right">
                 {% if request.user.is_authenticated %}
                     <li><a href="{% url 'logout' %}"><i class="glyphicon glyphicon-lock"></i> Logout</a></li>
