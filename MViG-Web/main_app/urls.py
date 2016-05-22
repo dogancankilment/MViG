@@ -24,8 +24,8 @@ urlpatterns = patterns('',
                            name='test_db_messages'),
 
                        url(r'^check',
-                           'main_app.views.android_check',
-                           name='android_check'),
+                           'main_app.views.android_message_check',
+                           name='android_message_check'),
 
                        url(r'^is_active',
                            'main_app.views.current_user_is_active',
