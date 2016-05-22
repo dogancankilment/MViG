@@ -2,15 +2,13 @@ package couchbase.com.mvig_android_user;
 
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
+import android.content.*;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -23,6 +21,7 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+
 public class MessageSend extends AppCompatActivity {
 
     private AutoCompleteTextView message_receiver;
@@ -32,6 +31,8 @@ public class MessageSend extends AppCompatActivity {
     private HttpResponse response = null;
     private HttpClient httpclient = null;
     private BufferedReader in = null;
+    private String email;
+    private Toolbar mActionBarToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,23 +40,27 @@ public class MessageSend extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message_send);
+        mActionBarToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mActionBarToolbar.setTitle("Mesaj Gönder");
+        setSupportActionBar(mActionBarToolbar);
 
         message_receiver = (AutoCompleteTextView) findViewById(R.id.message_receiver);
         message_body = (AutoCompleteTextView) findViewById(R.id.message_body);
         btn_send = (Button) findViewById(R.id.btn_sendMessage);
-
-
+        email = getIntent().getStringExtra("mail");
 
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String receiver = message_receiver.getText().toString();
                 String message = message_body.getText().toString();
-                message = message.replace("\n","");
-                if(message_send(receiver, message))
+                message = message.replace("\n", "-");
+                message = message.replace(" ", "-");
+                if (message_send(receiver, message))
                     basariMesajiGonder();
             }
         });
+
     }
 
     private void basariMesajiGonder() {
@@ -70,7 +75,7 @@ public class MessageSend extends AppCompatActivity {
             httpclient = new DefaultHttpClient();
             HttpGet request = new HttpGet();
             URI website = null;
-            website = new URI("http://www.mvig.duckdns.org/message/android/?number="+ receiver + "&content=" + message);
+            website = new URI("http://www.mvig.duckdns.org/message/android/?number="+ receiver + "&content=" + message+ "&email="+email);
             request.setURI(website);
             response = httpclient.execute(request);
             in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
@@ -87,6 +92,32 @@ public class MessageSend extends AppCompatActivity {
             e.printStackTrace();
         }
         return false;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
+
+    @Override
+    protected void onStop() {
+
+        super.onStop();
+    }
+
+    @Override
+    public void finish(){
+        Intent intent = new Intent();
+        intent.putExtra("mail",email);
+        setResult(1,intent);
+        super.finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
     }
 
 }
