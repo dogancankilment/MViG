@@ -25,11 +25,12 @@ class UserCreateForm(UserCreationForm):
         user = super(UserCreateForm, self).save(commit=False)
         user.email = self.cleaned_data["email"]
 
-        user.is_active = False
+        user.is_active = True
 
         if commit:
             user.save()
-            mail_sender(user.email)
+
+            # mail_sender(user.email)
         return user
 
 
