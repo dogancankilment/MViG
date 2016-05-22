@@ -4,6 +4,7 @@ import android.content.*;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -42,8 +43,7 @@ public class RegisterActivity extends AppCompatActivity {
     private HttpResponse response = null;
     private HttpClient httpclient = null;
     private BufferedReader in = null;
-
-
+    private Toolbar mActionBarToolbar;
 
 
     @Override
@@ -147,29 +147,30 @@ public class RegisterActivity extends AppCompatActivity {
             focusView = mEmailView;
             cancel = true;
         }
+        if(!addUserToDatabase(email, username, password)){
+            mUsernameView.setError(getString(R.string.error_username_exist));
+            focusView = mUsernameView;
+            cancel = true;
+        }
 
-
-        if (cancel) {
+        if (cancel)
+        {
             focusView.requestFocus();
-        } else {
+        }
+
+        else{
             //Kullanıcıyı database'e ekle
-            boolean sonuc = addUserToDatabase(email, username, password);
-            if(sonuc)
-                Toast.makeText(this, "KAYIT BAŞARILI", Toast.LENGTH_SHORT).show();
-            else
-                Toast.makeText(this, "KAYIT BAŞARISIZ", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "KAYIT BAŞARILI", Toast.LENGTH_SHORT).show();
 
             //Activasyon kodu hazırlanıyor.
             ActivationCreater.createCode();
             String activitionCode = ActivationCreater.getCode();
             Log.i("Aktivasyon Kod", activitionCode);
 
-
             //Aktivasyon kodunu sharedpreferences mekanizmasında saklamak için
             editor.putString("Aktivasyon", activitionCode);
             editor.putString("Email", email);
             editor.commit();
-
 
             //Mail adresine kod gönderme işlemi başlatılıyor.
             MailSender sender = new MailSender();
@@ -178,7 +179,7 @@ public class RegisterActivity extends AppCompatActivity {
             //Aktivasyon sayfasına geçiş
             Intent intent = new Intent(this, ActivationActivity.class);
             startActivity(intent);
-            }
+        }
 
     }
 
