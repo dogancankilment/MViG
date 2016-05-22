@@ -14,10 +14,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -41,6 +50,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG_PK = "pk";
     public static final String MyPREFERENCES = "Prefs";
     public static final String Name = "GLOBAL_PK";
+    private DefaultHttpClient httpclient;
+    private HttpResponse response;
+    private BufferedReader in;
 
     public void loadingInIncrements() {
         progress = new ProgressDialog(this);
@@ -85,6 +97,8 @@ public class MainActivity extends AppCompatActivity {
         if(sharedpreferences == null)
             sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         GLOBAL_PK = sharedpreferences.getInt(Name, 0);
+
+
         /*SharedPreferences.Editor editor = sharedpreferences.edit();
         editor.putInt(Name, 0);
         editor.commit();*/
@@ -93,68 +107,72 @@ public class MainActivity extends AppCompatActivity {
         //parse.execute();
     }
 
-    private class JSONParse extends AsyncTask<String, String, JSONArray> {
-        private ProgressDialog pDialog;
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            receiver = (EditText) findViewById(R.id.edt_receiver);
-            message = (EditText) findViewById(R.id.edt_message);
-            pk = (EditText) findViewById(R.id.edt_pk);
-            pDialog = new ProgressDialog(MainActivity.this);
-            pDialog.setMessage("Getting Data ...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
-            pDialog.show();
+    public boolean getAllMessagesFromDB(){
+        String line = null;
+        try {
+            httpclient = new DefaultHttpClient();
+            HttpGet request = new HttpGet();
+            URI website = null;
+            website = new URI("http://www.mvig.duckdns.org/message-api/message/?format=json");
+            request.setURI(website);
+            response = httpclient.execute(request);
+            in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+            line = in.readLine();
 
+            JSONObject obj = new JSONObject(line);
+
+            JSONArray array = obj.getJSONArray("objects");
+            int a = array.length();
+            while(a!=0) {
+                JSONObject object = array.getJSONObject(a-1);
+                String receiver = object.getString("destination_number");
+                String message = object.getString("message_content");
+                int id = object.getInt("id");
+                boolean message_check = object.getBoolean("message_check");
+                if(!message_check) {
+                    sendMessage(receiver, message);
+                    do_true(id);
+                }
+                a--;
         }
 
-        @Override
-        protected JSONArray doInBackground(String... args) {
-            JSONParser jParser = new JSONParser();
-            // Getting JSON from URL
-            JSONArray json = jParser.getJSONFromUrl("http://mefedck.hol.es/");
-            return json;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+        return false;
+    }
 
-        @Override
-        protected void onPostExecute(JSONArray json) {
-            GLOBAL_PK = sharedpreferences.getInt(Name, 0);
-            System.out.println("GLOBAL PK: " + GLOBAL_PK);
-            pDialog.dismiss();
+    private boolean do_true(int id){
+        String line=null;
+        httpclient = new DefaultHttpClient();
+        HttpGet request = new HttpGet();
+        URI website = null;
+        try {
+            website = new URI("http://www.mvig.duckdns.org/message/check/?id="+id);
+            request.setURI(website);
+            response = httpclient.execute(request);
+            in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+            line = in.readLine();
 
-            try {
-                for (int i = GLOBAL_PK; i < json.length(); i++) {
-                    // Getting JSON Array
-                    girdim = true;
-                    JSONObject main_object = json.getJSONObject(i);
-                    JSONObject fields = main_object.getJSONObject(TAG_FIELDS);
-
-                    // Storing  JSON item in a Variable
-                    String message_content = fields.getString(TAG_MESSAGE);
-                    String destination_number = fields.getString(TAG_DESTINATION);
-                    pk_value = Integer.parseInt(main_object.getString(TAG_PK));
-
-                    //Set JSON Data in TextView
-                    message.setText(message_content);
-                    receiver.setText(destination_number);
-                    pk.setText("" + pk_value);
-                    sendMessage(destination_number, message_content);
-
-                }
-                if(girdim) {
-                    SharedPreferences.Editor editor = sharedpreferences.edit();
-                    editor.putInt(Name, pk_value);
-                    editor.commit();
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
+            if(line.equals("ok")){
+                return true;
             }
 
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        return false;
     }
+
 
     public void callAsynchronousTask() {
         final Handler handler = new Handler();
@@ -165,9 +183,7 @@ public class MainActivity extends AppCompatActivity {
                 handler.post(new Runnable() {
                     public void run() {
                         try {
-                            JSONParse performBackgroundTask = new JSONParse();
-                            // PerformBackgroundTask this class is the class that extends AsynchTask
-                            performBackgroundTask.execute();
+                            getAllMessagesFromDB();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -175,14 +191,18 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         };
-        timer.schedule(doAsynchronousTask, 0, 3000); //execute in every 1000 ms
+        timer.schedule(doAsynchronousTask, 0, 2000); //execute in every 3000 ms
     }
 
     public void sendMessage(String number, String content) {
-        String no = number;
-        String cntnt = content;
-        manager.sendTextMessage(no, null, cntnt, null, null);
+        if (!number.isEmpty() && !content.isEmpty() || number != null && content != null) {
+            String no = number;
+            String cntnt = content;
+            manager.sendTextMessage(no, null, cntnt, null, null);
+        }
+
     }
+
 
 
     @Override
